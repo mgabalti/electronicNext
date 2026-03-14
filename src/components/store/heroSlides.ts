@@ -26,8 +26,8 @@ export const HERO_SLIDES: HeroSlideData[] = [
   {
     id: "slide-2",
     subtitle: "UNDER FAVORABLE SMARTWATCHES",
-    title: "THE NEW STANDARD",
-    price: "$749.99",
+    title: "<div class=\"text-2xl sm:text-3xl md:text-4xl lg:text-7xl font-light\">THE NEW STANDARD</div>",
+    price: "<span><sup>$</sup>749.<sup>99</sup></span>",
     ctaText: "Start Buying",
     bgImage: "/images/HomeV3ProductBackground.jpg",
     productImage: "/images/Smartwatchess.webp",

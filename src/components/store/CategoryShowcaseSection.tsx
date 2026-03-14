@@ -244,15 +244,17 @@ export function CategoryShowcaseSection() {
           gap: 6px;
         }
         .cat-bullet {
-          width: 28px;
-          height: 6px;
-          border-radius: 3px;
+          height: 8px;
+          width: 8px;
+          border-radius: 20px;
           background: #d1d5db;
           cursor: pointer;
-          transition: background 0.2s;
+          transition: all ease-in-out 0.5s;
         }
         .cat-bullet-active {
           background: #fed700;
+          width: 28px;
+
         }
       `}</style>
     </section>

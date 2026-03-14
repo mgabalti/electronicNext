@@ -19,13 +19,15 @@ export function SearchBar() {
     <form
       action={ROUTES.CATALOG}
       method="get"
-      className="flex w-full items-center rounded-3xl md:rounded-4xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm focus-within:ring-2 focus-within:ring-[#fed700] focus-within:border-[#fed700] transition-shadow hover:shadow-md"
+      className="flex w-full items-cnter rounded-3xl md:rounded-4xl overflow-hidden bg-white dark:bg-gray-900 focus-within:ring-2 focus-within:ring-[#fed700] focus-within:border-[#fed700] transition-shadow "
     >
-      <input
+      <div 
+      className="flex w-full border-r-0 rounded-bl-3xl md:rounded-bl-4xl border border-gray-200 dark:border-gray-700 overflow-hidden rounded-tl-3xl md:rounded-tl-4xl">
+        <input
         type="search"
         name="q"
         placeholder="Search for Products"
-        className="flex-1 min-w-0 px-3 sm:px-4 py-2 text-gray-700 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 bg-transparent focus:outline-none text-sm md:text-base"
+        className="flex-1 min-w-0 px-3 sm:px-4 !text-sm py-2 text-gray-700 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 bg-transparent focus:outline-none text-sm md:text-base"
         aria-label="Search for products"
       />
       <div className="hidden sm:flex items-center border-l border-gray-200 dark:border-gray-700">
@@ -41,6 +43,7 @@ export function SearchBar() {
           ))}
         </select>
         <ChevronDown className="w-4 h-4 text-gray-500 dark:text-gray-400 -ml-6 pointer-events-none shrink-0" />
+      </div>
       </div>
       <button
         type="submit"

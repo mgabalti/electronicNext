@@ -1,18 +1,15 @@
 /**
  * API client for backend requests
- * Use NEXT_PUBLIC_API_URL or appConfig.apiBaseUrl
+ * Uses NEXT_PUBLIC_API_URL (set in .env.local / environment)
  */
-const getBaseUrl = () =>
-  typeof window !== "undefined"
-    ? ""
-    : process.env.NEXT_PUBLIC_API_URL ?? "";
+const getBaseUrl = () => process.env.NEXT_PUBLIC_API_URL ?? "";
 
 export async function apiClient<T>(
   path: string,
   options?: RequestInit
 ): Promise<T> {
   const base = getBaseUrl();
-  const res = await fetch(`${base}${path}`, {
+  const res = await fetch(`${base}api/${path}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",

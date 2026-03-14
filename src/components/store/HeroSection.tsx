@@ -31,15 +31,19 @@ function SlideContent({
       <div className="container mx-auto px-4 sm:px-6 lg:px-10 xl:px-28 py-8 md:py-0 relative">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-center min-h-[300px] md:min-h-[380px]">
           <div className="order-2 lg:order-1">
-            <p className="text-sm md:text-lg text-cyan-600 dark:text-cyan-400 uppercase tracking-wider font-semibold mb-2">
+            
+            <h1 
+            className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold text-gray-800 dark:text-gray-100 uppercase tracking-tight mb-4"
+            dangerouslySetInnerHTML={{ __html: slide.title }}>
+             
+            </h1>
+            <p className="text-sm md:text-lg text-sky-500 dark:text-sky-400 uppercase tracking-wider font-semibold mb-2">
               {slide.subtitle}
             </p>
-            <h1 className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold text-gray-800 dark:text-gray-100 uppercase tracking-tight mb-4">
-              {slide.title}
-            </h1>
             {slide.price && (
-              <p className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-gray-800 dark:text-gray-100 mb-4">
-                {slide.price}
+              <p  className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-gray-800 dark:text-gray-100 mb-4"
+              dangerouslySetInnerHTML={{ __html: slide.price }}>
+                
               </p>
             )}
             <Link

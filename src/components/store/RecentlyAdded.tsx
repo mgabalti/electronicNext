@@ -1,321 +1,45 @@
 "use client";
-// components/RecentlyAdded.tsx
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import 'swiper/css';
 import ProductDisplay_V from './micros/products-display';
+import { useHomepageProducts } from '@/hooks/useHomepageProducts';
 
-interface Product {
-    id: number;                    // post ID from class/post-*
-    name: string;
-    slug: string;                  // derived from URL
-    categories: string[];          // main + sub-categories
-    thumbnail: {
-        src: string;
-        alt: string;
-        width: number;
-        height: number;
-    };
-    price: {
-        regular?: string;            // if on sale
-        sale: string;
-    };
-    onSale: boolean;
-    stockStatus: 'instock' | 'outofstock';
-    rating?: {
-        average: number;
-        count: number;
-    };
-    shortDescription: string[];    // bullet points as array
-    sku: string;
-    addToCart: {
-        text: 'Add to cart' | 'Read more';
-        url: string;                 // relative or full add-to-cart link
-        productId: number;
-    };
-    actions: {
-        wishlist: boolean;           // has wishlist button
-        compare: boolean;
-    };
+// ── Skeleton ──────────────────────────────────────────────────────────────────
+function SkeletonCard() {
+    return (
+        <div className="flex flex-col bg-white dark:bg-gray-950 h-[330px] animate-pulse">
+            <div className="mt-4 px-3 space-y-2">
+                <div className="h-3 w-20 bg-gray-200 dark:bg-gray-800 rounded" />
+                <div className="h-4 w-36 bg-gray-200 dark:bg-gray-800 rounded" />
+            </div>
+            <div className="flex-1 mx-6 mt-4 bg-gray-100 dark:bg-gray-800 rounded" />
+            <div className="px-4 pb-4 pt-3 flex justify-between">
+                <div className="h-4 w-16 bg-gray-200 dark:bg-gray-800 rounded" />
+                <div className="w-7 h-7 rounded-full bg-gray-200 dark:bg-gray-800" />
+            </div>
+        </div>
+    );
 }
 
-const products: Product[] = [
-    {
-        id: 2628,
-        name: "Powerbank 1130 mAh Blue",
-        slug: "powerbank-1130-mah-blue",
-        categories: ["Accessories", "Power Banks"],
-        thumbnail: {
-            src: "https://electro.madrasthemes.com/wp-content/uploads/2016/03/powerbank-300x300.png",
-            alt: "Powerbank 1130 mAh Blue",
-            width: 300,
-            height: 300
-        },
-        price: {
-            regular: "$210.00",
-            sale: "$200.00"
-        },
-        onSale: true,
-        stockStatus: "instock",
-        rating: {
-            average: 0,
-            count: 0
-        },
-        shortDescription: [
-            "11300 mAh",
-            "LED Indicator",
-            "5V",
-            "2.0A Output"
-        ],
-        sku: "5487FB8/09",
-        addToCart: {
-            text: "Add to cart",
-            url: "/?add-to-cart=2628",
-            productId: 2628
-        },
-        actions: {
-            wishlist: true,
-            compare: true
-        }
-    },
-    {
-        id: 2613,
-        name: "Laptop Screener CX70 2QF-621XPL 17.3″ 4210",
-        slug: "laptop-screener-cx70-2qf-621xpl-17-3-4210",
-        categories: ["Laptops", "Laptops & Computers"],
-        thumbnail: {
-            src: "https://electro.madrasthemes.com/wp-content/uploads/2016/03/applap-300x300.png",
-            alt: "Laptop Screener CX70 2QF-621XPL 17.3\" 4210",
-            width: 300,
-            height: 300
-        },
-        price: {
-            sale: "$2,399.00"   // no regular price → not on sale
-        },
-        onSale: false,
-        stockStatus: "outofstock",
-        rating: {
-            average: 4.67,
-            count: 3
-        },
-        shortDescription: [
-            "Intel Core i5 processors (13-inch model)",
-            "Intel Iris Graphics 6100 (13-inch model)",
-            "Flash storage",
-            "Up to 10 hours of battery life2 (13-inch model)",
-            "Force Touch trackpad (13-inch model)"
-        ],
-        sku: "5487FB8/04",
-        addToCart: {
-            text: "Read more",
-            url: "https://electro.madrasthemes.com/product/laptop-screener-cx70-2qf-621xpl-17-3-4210/",
-            productId: 2613
-        },
-        actions: {
-            wishlist: true,
-            compare: true
-        }
-    },
-    {
-        id: 2715,
-        name: "GameConsole Destiny Special Edition",
-        slug: "gameconsole-destiny-special-edition-2",
-        categories: ["Game Consoles", "Video Games & Consoles"],
-        thumbnail: {
-            src: "https://electro.madrasthemes.com/wp-content/uploads/2016/03/game1-300x300.png",
-            alt: "GameConsole Destiny Special Edition",
-            width: 300,
-            height: 300
-        },
-        price: {
-            sale: "$789.00"
-        },
-        onSale: false,
-        stockStatus: "instock",
-        rating: {
-            average: 0,
-            count: 0
-        },
-        shortDescription: [
-            "Play online with your friends, get free games, save games online and more with PlayStation",
-            "Cutting edge graphics bring game worlds to life like never before, and next gen",
-            "Connect with your friends to broadcast and celebrate your epic moments",
-            "Perfect for both new players and players new to PS4"
-        ],
-        sku: "5487FB8/40",
-        addToCart: {
-            text: "Add to cart",
-            url: "/?add-to-cart=2715",
-            productId: 2715
-        },
-        actions: {
-            wishlist: true,
-            compare: true
-        }
-    },
-    {
-        id: 2628,
-        name: "Powerbank 1130 mAh Blue",
-        slug: "powerbank-1130-mah-blue",
-        categories: ["Accessories", "Power Banks"],
-        thumbnail: {
-            src: "https://electro.madrasthemes.com/wp-content/uploads/2016/03/powerbank-300x300.png",
-            alt: "Powerbank 1130 mAh Blue",
-            width: 300,
-            height: 300
-        },
-        price: {
-            regular: "$210.00",
-            sale: "$200.00"
-        },
-        onSale: true,
-        stockStatus: "instock",
-        rating: {
-            average: 0,
-            count: 0
-        },
-        shortDescription: [
-            "11300 mAh",
-            "LED Indicator",
-            "5V",
-            "2.0A Output"
-        ],
-        sku: "5487FB8/09",
-        addToCart: {
-            text: "Add to cart",
-            url: "/?add-to-cart=2628",
-            productId: 2628
-        },
-        actions: {
-            wishlist: true,
-            compare: true
-        }
-    },
-    {
-        id: 2613,
-        name: "Laptop Screener CX70 2QF-621XPL 17.3″ 4210",
-        slug: "laptop-screener-cx70-2qf-621xpl-17-3-4210",
-        categories: ["Laptops", "Laptops & Computers"],
-        thumbnail: {
-            src: "https://electro.madrasthemes.com/wp-content/uploads/2016/03/applap-300x300.png",
-            alt: "Laptop Screener CX70 2QF-621XPL 17.3\" 4210",
-            width: 300,
-            height: 300
-        },
-        price: {
-            sale: "$2,399.00"   // no regular price → not on sale
-        },
-        onSale: false,
-        stockStatus: "outofstock",
-        rating: {
-            average: 4.67,
-            count: 3
-        },
-        shortDescription: [
-            "Intel Core i5 processors (13-inch model)",
-            "Intel Iris Graphics 6100 (13-inch model)",
-            "Flash storage",
-            "Up to 10 hours of battery life2 (13-inch model)",
-            "Force Touch trackpad (13-inch model)"
-        ],
-        sku: "5487FB8/04",
-        addToCart: {
-            text: "Read more",
-            url: "https://electro.madrasthemes.com/product/laptop-screener-cx70-2qf-621xpl-17-3-4210/",
-            productId: 2613
-        },
-        actions: {
-            wishlist: true,
-            compare: true
-        }
-    },
-    {
-        id: 2715,
-        name: "GameConsole Destiny Special Edition",
-        slug: "gameconsole-destiny-special-edition-2",
-        categories: ["Game Consoles", "Video Games & Consoles"],
-        thumbnail: {
-            src: "https://electro.madrasthemes.com/wp-content/uploads/2016/03/game1-300x300.png",
-            alt: "GameConsole Destiny Special Edition",
-            width: 300,
-            height: 300
-        },
-        price: {
-            sale: "$789.00"
-        },
-        onSale: false,
-        stockStatus: "instock",
-        rating: {
-            average: 0,
-            count: 0
-        },
-        shortDescription: [
-            "Play online with your friends, get free games, save games online and more with PlayStation",
-            "Cutting edge graphics bring game worlds to life like never before, and next gen",
-            "Connect with your friends to broadcast and celebrate your epic moments",
-            "Perfect for both new players and players new to PS4"
-        ],
-        sku: "5487FB8/40",
-        addToCart: {
-            text: "Add to cart",
-            url: "/?add-to-cart=2715",
-            productId: 2715
-        },
-        actions: {
-            wishlist: true,
-            compare: true
-        }
-    },
-    {
-        id: 2717,
-        name: "Tablet Red EliteBook Revolve 810 G2",
-        slug: "tablet-red-elitebook-revolve-810-g2",
-        categories: ["Laptops", "Laptops & Computers", "Ultrabooks"],
-        thumbnail: {
-            src: "https://electro.madrasthemes.com/wp-content/uploads/2016/03/apptablet-300x300.png",
-            alt: "Tablet Red EliteBook Revolve 810 G2",
-            width: 300,
-            height: 300
-        },
-        price: {
-            regular: "$2,299.00",
-            sale: "$2,100.00"
-        },
-        onSale: true,
-        stockStatus: "instock",
-        rating: {
-            average: 3.33,
-            count: 3
-        },
-        shortDescription: [
-            "Intel Core i5 processors (13-inch model)",
-            "Intel Iris Graphics 6100 (13-inch model)",
-            "Flash storage",
-            "Up to 10 hours of battery life2 (13-inch model)",
-            "Force Touch trackpad (13-inch model)"
-        ],
-        sku: "5487FB8/41",
-        addToCart: {
-            text: "Add to cart",
-            url: "/?add-to-cart=2717",
-            productId: 2717
-        },
-        actions: {
-            wishlist: true,
-            compare: true
-        }
-    }
-];
+// ── Component ─────────────────────────────────────────────────────────────────
 export default function RecentlyAdded() {
     const prevRef = useRef<HTMLButtonElement>(null);
     const nextRef = useRef<HTMLButtonElement>(null);
+    const [activeBrand, setActiveBrand] = useState<string>('All');
+
+    const { products, brands, loading, error } = useHomepageProducts();
+
+    const visibleProducts = activeBrand === 'All'
+        ? products
+        : products.filter(p => p.brand === activeBrand);
 
     return (
         <div className="py-8 px-4 md:px-6 lg:px-8 bg-white dark:bg-gray-950">
-            <div className=" mx-auto">
+            <div className="mx-auto">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">
@@ -341,50 +65,69 @@ export default function RecentlyAdded() {
                     </div>
                 </div>
 
-                {/* Category tags row */}
-                <div className="flex gap-3 mb-5 overflow-x-auto pb-2 scrollbar-thin">
-                    {["Accessories, Headphone", "Accessories, Headphones", "Ultra Wireless S50",
-                        "Game Consoles, Video", "Audio Speakers, TV &", "Laptops, Laptops &",
-                        "Accessories, Headphones"
-                    ].map((cat, i) => (
-                        <span
-                            key={i}
-                            className="px-4 py-1.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm rounded-full whitespace-nowrap"
-                        >
-                            {cat}
-                        </span>
-                    ))}
-                </div>
+                {/* Brand filter tabs */}
+                {!error && brands.length > 0 && (
+                    <div className="flex gap-2 mb-5 overflow-x-auto pb-2 scrollbar-thin">
+                        {['All', ...brands].map(brand => (
+                            <button
+                                key={brand}
+                                onClick={() => setActiveBrand(brand)}
+                                className={`px-4 py-1.5 text-sm rounded-full whitespace-nowrap border transition-colors ${
+                                    activeBrand === brand
+                                        ? 'bg-[#fed700] border-[#fed700] text-gray-800 font-semibold'
+                                        : 'bg-gray-100 dark:bg-gray-800 border-transparent text-gray-600 dark:text-gray-300 hover:border-[#fed700]'
+                                }`}
+                            >
+                                {brand}
+                            </button>
+                        ))}
+                    </div>
+                )}
 
                 {/* Products carousel */}
                 <div className="bg-slate-100 dark:bg-gray-800" style={{ gap: '1px' }}>
-                    <Swiper
-                        modules={[Navigation]}
-                        navigation={{
-                            prevEl: prevRef.current,
-                            nextEl: nextRef.current,
-                        }}
-                        onBeforeInit={(swiper: SwiperType) => {
-                            if (swiper.params.navigation && typeof swiper.params.navigation !== 'boolean') {
-                                swiper.params.navigation.prevEl = prevRef.current;
-                                swiper.params.navigation.nextEl = nextRef.current;
-                            }
-                        }}
-                        slidesPerView={2}
-                        spaceBetween={1}
-                        breakpoints={{
-                            480:  { slidesPerView: 3 },
-                            768:  { slidesPerView: 4 },
-                            1024: { slidesPerView: 5 },
-                            1280: { slidesPerView: 6 },
-                        }}
-                    >
-                        {products.map((product, index) => (
-                            <SwiperSlide key={index}>
-                                <ProductDisplay_V product={product} />
-                            </SwiperSlide>
-                        ))}
-                    </Swiper>
+                    {loading ? (
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-px">
+                            {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
+                        </div>
+                    ) : error ? (
+                        <div className="py-16 flex flex-col items-center gap-3 text-gray-400 dark:text-gray-600">
+                            <svg className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                            </svg>
+                            <p className="text-sm font-medium">Could not load products</p>
+                            <p className="text-xs">Make sure the API server is running at <code className="px-1 py-0.5 bg-gray-100 dark:bg-gray-800 rounded">localhost:7195</code></p>
+                        </div>
+                    ) : (
+                        <Swiper
+                            key={activeBrand}
+                            modules={[Navigation]}
+                            navigation={{
+                                prevEl: prevRef.current,
+                                nextEl: nextRef.current,
+                            }}
+                            onBeforeInit={(swiper: SwiperType) => {
+                                if (swiper.params.navigation && typeof swiper.params.navigation !== 'boolean') {
+                                    swiper.params.navigation.prevEl = prevRef.current;
+                                    swiper.params.navigation.nextEl = nextRef.current;
+                                }
+                            }}
+                            slidesPerView={2}
+                            spaceBetween={1}
+                            breakpoints={{
+                                480:  { slidesPerView: 3 },
+                                768:  { slidesPerView: 4 },
+                                1024: { slidesPerView: 5 },
+                                1280: { slidesPerView: 6 },
+                            }}
+                        >
+                            {visibleProducts.map((product, index) => (
+                                <SwiperSlide key={`${activeBrand}-${index}`}>
+                                    <ProductDisplay_V product={product} />
+                                </SwiperSlide>
+                            ))}
+                        </Swiper>
+                    )}
                 </div>
             </div>
         </div>
